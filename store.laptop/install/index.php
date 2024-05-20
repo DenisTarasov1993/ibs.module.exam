@@ -90,7 +90,7 @@ class store_laptop extends CModule
             return;
         }
         CopyDirFiles(
-            $this->documentRoot . '/local/modules/' . $this->MODULE_ID . '/install/components/store',
+            $this->documentRoot . '/local/modules/' . $this->MODULE_ID . '/install/components/',
             $this->documentRoot . '/local/components',
             false,
             true

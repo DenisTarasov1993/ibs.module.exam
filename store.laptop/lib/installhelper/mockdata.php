@@ -98,7 +98,7 @@ class MockData
         }
     }
     
-    private static function setRelation(): void
+    public static function setRelation(): void
     {
         $laptopIds = static::getIds(StoreLaptopTable::class);
         $propertyIds = static::getIds(StorePropertyTable::class);
@@ -106,7 +106,7 @@ class MockData
             $randomProperty = static::getRandomIds($propertyIds);
             $laptopObject = StoreLaptopTable::getByPrimary($laptopId)
                 ->fetchObject();
-            foreach ($randomProperty as $propertyId) {           
+            foreach ($randomProperty as $propertyId) {
                 $propertyObject = StorePropertyTable::getByPrimary($propertyId)
                     ->fetchObject();
                 $laptopObject->addToProperty($propertyObject);             
@@ -118,6 +118,7 @@ class MockData
     private static function getRandomIds(array $ids = []): array
     {
         $randomKeys = array_rand($ids, rand(1, (count($ids) - 1)));
+        
         if (is_array($randomKeys)) {
             $selectedIds = [];
             foreach ($randomKeys as $keyNum) {
@@ -125,7 +126,7 @@ class MockData
             }
             return $selectedIds;
         }
-        return [$randomKeys];
+        return [$ids[$randomKeys]];
     }
     
     private static function getIds($tableClass): array
