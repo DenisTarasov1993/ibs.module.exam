@@ -1,5 +1,6 @@
 <?php
 
+use Bitrix\Main\Context;
 use Bitrix\Main\Loader;
 use CBitrixComponent;
 use Store\Laptop\DBProvider\ORM\LaptopList;
@@ -15,6 +16,7 @@ class StoreLaptopsList extends CBitrixComponent
     {
         Loader::includeModule('store.laptop');
         $lapObject = new LaptopList();
+        $request = Context::getCurrent()->getRequest();
         
         if ($this->arParams['TYPE_PAGE'] == 'start') {
             $this->arResult['BRANDS'] = $lapObject->getManufacturers();
@@ -38,10 +40,13 @@ class StoreLaptopsList extends CBitrixComponent
             }
         }
         
-        $this->arResult['LAPTOPS'] = $lapObject->getLaptops(
+        $laptops = $lapObject->getLaptops(
             intval($this->arParams['BRAND_ID']),
             intval($this->arParams['MODEL_ID'])
         );
+        $this->arResult['LAPTOPS'] = $laptops['LAPTOPS'];
+        $this->arResult['TOTAL_COUNT'] = $laptops['TOTAL_COUNT'];
+        
         foreach ($this->arResult['LAPTOPS'] as $keyLap => $laptop) {
             $this->arResult['LAPTOPS'][$keyLap]['URL'] = SearchEngineFriendly::makeNormalUrl(                
                 trim($this->arParams['~SEF_FOLDER']),

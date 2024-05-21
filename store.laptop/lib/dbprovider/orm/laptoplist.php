@@ -2,9 +2,11 @@
 
 namespace Store\Laptop\DBProvider\ORM;
 
+use Bitrix\Main\Context;
 use Store\Laptop\DBProvider\ORM\StoreLaptopTable;
 use Store\Laptop\DBProvider\ORM\StoreManufacturerTable;
 use Store\Laptop\DBProvider\ORM\StoreModelTable;
+use Store\Laptop\Helper\LaptopsList;
 
 class LaptopList
 {
@@ -18,25 +20,57 @@ class LaptopList
         if ($manufacturerId) {
             $filter['MODEL.MANUFACTURER.ID'] = $manufacturerId;
         }
+        
+        $request = Context::getCurrent()
+            ->getRequest()
+        ;
+        $order = ['ID' => 'ASC'];
+        if (
+            ($request->get('by') == 'PRICE' || $request->get('by') == 'YEAR')
+            && ($request->get('order') == 'desc' || $request->get('order') == 'asc')
+        ) {
+            $order = [$request->get('by') => $request->get('order')];
+        }
+        foreach (LaptopsList::getFilter() as $keyFilter => $valueParam) {
+            $filter[$keyFilter] = $valueParam;
+        }
+        $nav = LaptopsList::getNavParams();  
+        
         $laptopObject = StoreLaptopTable::getList([
-            'select' => ['ID', 'NAME', 'CODE'],
+            'order' => $order,
+            'select' => [
+                'ID', 'NAME', 'CODE', 'PRICE', 'YEAR', 'MODEL_NAME' => 'MODEL.NAME',
+                'MANUFACTURER_NAME' => 'MODEL.MANUFACTURER.NAME'
+            ],
             'filter' => $filter,
+            'offset' => $nav->getOffset(),
+            'limit' => $nav->getLimit(),
+            'count_total' => true,
         ]);
+            
         while ($laptop = $laptopObject->fetch()) {
             $objects[] = $laptop;
         }
-        return $objects;
+        return [
+            'LAPTOPS' => $objects,
+            'TOTAL_COUNT' => $laptopObject->getCount(),
+            'ONPAGE' => $onpage,
+        ];
     }
     
     public function getModels(int $manufacturerId = 0): array
     {
         $models = [];
+        $filter = [];
+        if ($manufacturerId) {
+            $filter = ['MANUFACTURER.ID' => $manufacturerId];
+        }
         $object = StoreModelTable::getList([
             'select' => [
                 'ID', 'NAME', 'CODE', 'MANUFACTURER.ID', 
                 'BRAND_CODE' => 'MANUFACTURER.CODE'
             ],
-            'filter' => ['MANUFACTURER.ID' => $manufacturerId]
+            'filter' => $filter
         ]);
         while ($model = $object->fetch()) {
             $models[] = $model;
@@ -54,6 +88,20 @@ class LaptopList
             $manufacturers[] = $manufacturer;
         }
         return $manufacturers;
+    }
+    
+    public static function isCodeHere(string $code = '', $object): int
+    {
+        $dbObject = $object::getList([
+            'filter' => [
+                '=CODE' => htmlspecialcharsbx($code),
+            ],
+            'select' => ['ID']
+        ]);
+        if ($object = $dbObject->fetch()) {
+            return $object['ID'];
+        }
+        return 0;
     }
     
 }

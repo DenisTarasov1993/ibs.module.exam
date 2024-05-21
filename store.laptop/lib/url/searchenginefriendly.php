@@ -6,9 +6,11 @@ use Bitrix\Main\Context;
 use Bitrix\Main\Loader;
 use Bitrix\Main\HttpRequest;
 use Bitrix\Iblock\Component\Tools;
-use Store\Laptop\DBProvider\ORM\StoreLaptop;
+use Store\Laptop\DBProvider\ORM\LaptopList;
+use Store\Laptop\DBProvider\ORM\StoreLaptopTable;
+use Store\Laptop\DBProvider\ORM\StoreModelTable;
 use Store\Laptop\DBProvider\ORM\StoreModel;
-use Store\Laptop\DBProvider\ORM\StoreManufacturer;
+use Store\Laptop\DBProvider\ORM\StoreManufacturerTable;
 
 class SearchEngineFriendly
 {
@@ -16,9 +18,9 @@ class SearchEngineFriendly
     private array $urlVariables = [];
     private array $idsList = [];
     private array $examiner = [
-        '#BRAND#' => StoreManufacturer::class,
-        '#MODEL#' => StoreModel::class,
-        '#NOTEBOOK#' => StoreLaptop::class,
+        '#BRAND#' => StoreManufacturerTable::class,
+        '#MODEL#' => StoreModelTable::class,
+        '#NOTEBOOK#' => StoreLaptopTable::class,
     ];
     private array $availTemplates = [];
     
@@ -78,7 +80,7 @@ class SearchEngineFriendly
     {
         foreach ($this->urlVariables as $rules) {
             foreach ($rules as $macro => $code) {
-                if (0 == $this->idsList[$macro] = $this->examiner[$macro]::isCodeHere(trim($code))) {
+                if (0 == $this->idsList[$macro] = LaptopList::isCodeHere(trim($code), $this->examiner[$macro])) {
                     $this->call404();
                     break;
                 }
@@ -155,6 +157,11 @@ class SearchEngineFriendly
         }
     }
     
+    /**
+     * 
+     * 
+     *Если есть условия с сильными параметрами, уберём условия без них 
+     */
     private function dropWeakRules(array $examList = []): array
     {
         $isHardRules = false;

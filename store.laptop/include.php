@@ -5,6 +5,7 @@ use Bitrix\Main\Loader;
 Loader::registerAutoloadClasses(
     'store.laptop',
     [
+        'Store\\Laptop\\DBProvider\\ORM\\FilterSettings' => 'lib/dbprovider/orm/filtersettings.php',
         'Store\\Laptop\\DBProvider\\ORM\\LaptopPage' => 'lib/dbprovider/orm/laptoppage.php',
         'Store\\Laptop\\DBProvider\\ORM\\LaptopList' => 'lib/dbprovider/orm/laptoplist.php',
         'Store\\Laptop\\DBProvider\\ORM\\StoreProperty' => 'lib/dbprovider/orm/storeproperty.php',
@@ -19,5 +20,6 @@ Loader::registerAutoloadClasses(
         'Store\\Laptop\\Components\\Settings' => 'lib/components/settings/parentway.php',
         'Store\\Laptop\\URL\\SearchEngineFriendly' => 'lib/url/searchenginefriendly.php',
         'Store\\Laptop\\InstallHelper\\DBManager' => 'lib/installhelper/dbmanager.php',
+        'Store\\Laptop\\Helper\\LaptopsList' => 'lib/helper/laptopslist.php',
     ]
 );
