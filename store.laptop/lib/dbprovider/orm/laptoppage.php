@@ -6,6 +6,11 @@ use Store\Laptop\DBProvider\ORM\StoreLaptopTable;
 
 class LaptopPage
 {
+    /**
+     * Детальная информация по ноутбуку
+     * @param int $laptopId - id ноутбука
+     * @return array - набор полей в т.ч. связанных у сущности ноутбука
+     */
     public function getById(int $laptopId = 0): array
     {
         $laptopObject = StoreLaptopTable::getByPrimary($laptopId, [

@@ -6,6 +6,10 @@ use Bitrix\Main\Application;
 
 class DBManager
 {   
+    /**
+     * Генерация таблиц для модуля
+     * @param array $tablesList - классы таблиц
+     */
     public static function createTables(array $tablesList = []): void
     {
         foreach ($tablesList as $classTableName) {   
@@ -17,6 +21,10 @@ class DBManager
         }
     }
     
+    /**
+     * Удаление таблиц для модуля
+     * @param array $tablesList - классы таблиц
+     */
     public static function dropTables(array $tablesList = []): void
     {
         $connection = Application::getConnection();
@@ -28,6 +36,10 @@ class DBManager
         }
     }
     
+    /**
+     * Проверка существования таблицы
+     * @param string $tablesName - имя таблицы
+     */
     private static function hasTable(string $tableName): bool
     {
         $connection = Application::getConnection();

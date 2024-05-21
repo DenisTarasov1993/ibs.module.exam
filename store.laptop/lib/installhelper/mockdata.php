@@ -37,6 +37,9 @@ class MockData
         'Aspire',
     ];
     
+    /**
+     * Набор действий по генерации тестовых данных
+     */
     public static function generateDefault(): void
     {
         static::createManufacturers();
@@ -46,6 +49,9 @@ class MockData
         static::setRelation();
     }
     
+    /**
+     * Создание перечня производителей
+     */
     private static function createManufacturers(): void
     {
         foreach (static::$manufacturerList as $manufacturerName) {
@@ -57,6 +63,9 @@ class MockData
         }
     }
     
+    /**
+     * Создание перечня моделей
+     */
     private static function createModels(): void
     {
         $manufacturerIds = static::getIds(StoreManufacturerTable::class);
@@ -71,6 +80,9 @@ class MockData
         }
     }
     
+    /**
+     * Создание перечня ноутбуков
+     */
     private static function createLaptops(): void
     {
         $modelIds = static::getIds(StoreModelTable::class);
@@ -88,6 +100,9 @@ class MockData
         }
     }
     
+    /**
+     * Создание опций для ноутбуков
+     */
     private static function createProperty(): void
     {
         for ($num = 1; $num < 15; $num ++) {
@@ -98,6 +113,9 @@ class MockData
         }
     }
     
+    /**
+     * Генерация случайных взаимосвязей ноутбук >< опция 
+     */
     public static function setRelation(): void
     {
         $laptopIds = static::getIds(StoreLaptopTable::class);
@@ -115,6 +133,11 @@ class MockData
         }
     }
     
+    /**
+     * Получить случайный набор id из массива произвольного количества
+     * @param array $ids - набор id
+     * @return array - случайный набор id
+     */
     private static function getRandomIds(array $ids = []): array
     {
         $randomKeys = array_rand($ids, rand(1, (count($ids) - 1)));
@@ -129,6 +152,11 @@ class MockData
         return [$ids[$randomKeys]];
     }
     
+    /**
+     * Получить набор всех id из таблицы
+     * @param $tableClass - класс таблицы
+     * @return array - случайный всех id в таблице
+     */
     private static function getIds($tableClass): array
     {
         $dbOb = $tableClass::getList([
@@ -141,6 +169,11 @@ class MockData
         return $ids;
     }
     
+    /**
+     * Генерация символьного кода на основании строки
+     * @param $name - строка
+     * @return string - символьный код
+     */
     private static function getCode(string $name = ''): string
     {
         return Cutil::translit(

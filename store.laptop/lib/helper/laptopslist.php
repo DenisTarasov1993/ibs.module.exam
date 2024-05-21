@@ -10,6 +10,13 @@ use Store\Laptop\DBProvider\ORM\LaptopList;
 
 class LaptopsList
 {
+    /**
+     * id контейнера grid компонента
+     */
+    private static $gridId = 'report_list';
+    /**
+     * Столбцы таблицы
+     */
     private static array $tableColumns = [
         ['id' => 'ID', 'name' => 'LAPTOPS_LIST_ID', 'default' => true],
         ['id' => 'MANUFACTURER', 'name' => 'LAPTOPS_LIST_MANUFACTURER', 'default' => true],
@@ -18,6 +25,9 @@ class LaptopsList
         ['id' => 'YEAR', 'name' => 'LAPTOPS_LIST_YEAR', 'sort' => 'YEAR', 'default' => true],
         ['id' => 'PRICE', 'name' => 'LAPTOPS_LIST_PRICE', 'sort' => 'PRICE', 'default' => true],
     ];
+    /**
+     * Набор доступных полей фильтра
+     */
     private static array $filterFields = [
         [
             'id' => 'MODEL.ID', 
@@ -43,6 +53,11 @@ class LaptopsList
         ]
     ];
     
+    /**
+     * Перевод нейминга в массиве в пользовательское название
+     * @param array $items - массив с параметрами
+     * @return array - массив с подменёнными языковыми фразами
+     */
     private static function setLocalization(array $items = []): array
     {
         foreach ($items as $keyItem => $item) {
@@ -51,6 +66,11 @@ class LaptopsList
         return $items;
     }
     
+    /**
+     * формирование вариантов выбора для фильтра
+     * @param array $items - массив с полными параметрами
+     * @return array - массив вариантов воспринимаемый grid-фильтром
+     */
     private static function itemsFormed(array $items = []): array
     {
         $formed = [];
@@ -60,16 +80,28 @@ class LaptopsList
         return $formed;
     }
     
+    /**
+     * запрос перечня производителей
+     * @return array - массив производителей, для grid-фильтра
+     */
     private static function getManufacturer(): array
     {
         return static::itemsFormed(LaptopList::getManufacturers());
     }
     
+    /**
+     * запрос перечня моделей
+     * @return array - массив моделей, для grid-фильтра
+     */
     private static function getModels(): array
     {
         return static::itemsFormed(LaptopList::getModels());
     }
-    
+
+    /**
+     * Получение доступных полей для фильтра
+     * @return array - массив полей фильтра
+     */    
     public static function getFilterFields()
     {
         foreach (static::$filterFields as $keyField => $params) {
@@ -83,13 +115,18 @@ class LaptopsList
         return static::setLocalization(static::$filterFields);
     }
     
+    /**
+     * формирование постранички для grid-компонента
+     * @param int $count - общее число строк
+     * @return PageNavigation - объект постранички
+     */
     public static function getNavParams(int $count = 0): PageNavigation
     {
-        $gridOptions = new Options('report_list');
+        $gridOptions = new Options(static::getContainerId());
         $sort = $gridOptions->GetSorting(['sort' => ['ID' => 'DESC'], 'vars' => ['by' => 'by', 'order' => 'order']]);
         $navParams = $gridOptions->GetNavParams();
 
-        $nav = new PageNavigation('report_list');
+        $nav = new PageNavigation(static::getContainerId());
         $nav->allowAllRecords(false)
             ->setPageSize($navParams['nPageSize'])
             ->initFromUri();
@@ -99,15 +136,23 @@ class LaptopsList
         return $nav;
     }
     
+    /**
+     * Получение списка столбцов для grid-таблицы
+     * @return PageNavigation - столбцы с языковыми фразами
+     */
     public static function getColumns(): array
     {
         return static::setLocalization(static::$tableColumns);
     }
     
+    /**
+     * формирование фильтра для grid-компонента в воспринимаемом виде
+     * @return array - набор условий
+     */
     public static function getFilter(): array
     {
         $filterLaptop = [];
-        $filterData = (new FilterOption('report_list'))->getFilter([]);
+        $filterData = (new FilterOption(static::getContainerId()))->getFilter([]);
         if (array_key_exists('FIND', $filterData)) {
             $filterLaptop['NAME'] = "%".$filterData['FIND']."%";
         }
@@ -125,5 +170,14 @@ class LaptopsList
         }
         return $filterLaptop;
     }
-        
+    
+    /**
+     * grid - id для компонента
+     * @return array - набор условий
+     */
+    public static function getContainerId(): string
+    {
+        return static::$gridId;
+    }
+
 }

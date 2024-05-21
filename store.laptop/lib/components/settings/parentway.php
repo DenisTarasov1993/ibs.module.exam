@@ -9,6 +9,10 @@ class ParentWay
     private static $parentId = 'store_laptop';
     private static $parentSort = 1000;
     
+    /**
+     * Связка для компонентов модуля
+     * @return array - набор общий параметров для компонентов
+     */
     public static function getPathForDescription(): array
     {
         Loc::loadMessages(__FILE__);
