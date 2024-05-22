@@ -10,6 +10,14 @@ use Store\Laptop\Helper\LaptopsList;
 
 class LaptopList
 {
+    /**
+     * Получить набор ноутбуков по параметрам.
+     * Допускается передать параметры из урла (аргументы функции)
+     * Дополнительно будут проверены параметры из grid-фильтра (считаются приоритетными)
+     * @param int $manufacturerId - id производителя
+     * @param int $modelId - id модели
+     * @return array - список ноутбуков
+     */
     public function getLaptops(int $manufacturerId = 0, int $modelId = 0): array
     {
         $objects = [];
@@ -58,6 +66,11 @@ class LaptopList
         ];
     }
     
+    /**
+     * Получить список моделей производителя
+     * @param int $manufacturerId - id производителя
+     * @return array - список моделей
+     */
     public function getModels(int $manufacturerId = 0): array
     {
         $models = [];
@@ -78,6 +91,10 @@ class LaptopList
         return $models;
     }
     
+    /**
+     * Получить список производителей
+     * @return array - список производителей
+     */
     public function getManufacturers(): array
     {
         $manufacturers = [];
@@ -90,6 +107,12 @@ class LaptopList
         return $manufacturers;
     }
     
+    /**
+     * проверить что символьный код содержится в таблице
+     * @param string $code - code для проверки
+     * @param object - класс таблицы
+     * @return int - id найденной строки, либо 0 если нет такого
+     */
     public static function isCodeHere(string $code = '', $object): int
     {
         $dbObject = $object::getList([

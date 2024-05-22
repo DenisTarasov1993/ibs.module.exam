@@ -14,16 +14,21 @@ use Store\Laptop\DBProvider\ORM\StoreManufacturerTable;
 
 class SearchEngineFriendly
 {
+    /** Набор фрагментов из урла */
     private array $stringParameters = [];
+    /** соотнесённые макрос=фрагмент урла */ 
     private array $urlVariables = [];
+    /** набор id из соответствующих макросу таблиц */
     private array $idsList = [];
+    /** соотвествие макроса таблице */
     private array $examiner = [
         '#BRAND#' => StoreManufacturerTable::class,
         '#MODEL#' => StoreModelTable::class,
         '#NOTEBOOK#' => StoreLaptopTable::class,
     ];
+    /** шаблоны типов страниц из компонента */
     private array $availTemplates = [];
-    
+    /** определённый типа страницы для компонента */
     private string $typePage;
     private HttpRequest $request;
     
@@ -87,9 +92,22 @@ class SearchEngineFriendly
         return 0;
     }
 
-    public function getVariables(): array
+    /**
+     * вернуть парамтры для выбранной страницы
+     * @return array - параметры страницы
+     */
+    private function getVariables(): array
     {
         return $this->urlVariables;
+    }
+        
+    /**
+     * установить парамтры для выбранной страницы
+     * @param array - параметры страницы
+     */
+    private function setVariables(array $variables = []): void
+    {
+        $this->urlVariables = $variables;
     }
     
     /**
@@ -107,7 +125,7 @@ class SearchEngineFriendly
      */
     private function examVariables(): void
     {
-        foreach ($this->urlVariables as $rules) {
+        foreach ($this->getVariables() as $rules) {
             foreach ($rules as $macro => $code) {
                 if (0 == $this->idsList[$macro] = LaptopList::isCodeHere(trim($code), $this->examiner[$macro])) {
                     $this->call404();
@@ -197,7 +215,7 @@ class SearchEngineFriendly
         $examList = $this->dropWeakRules($examList);
         
         foreach ($examList as $typeKey => $possibleCondition) {
-            $this->urlVariables = $possibleCondition['variables'];
+            $this->setVariables($possibleCondition['variables']);
             return $typeKey;
         }
     }
