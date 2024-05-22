@@ -253,8 +253,8 @@ class SearchEngineFriendly
     {
         if (
             mb_strpos(
-                $this->request->getRequestedPageDirectory(), 
-                $sefFolder
+                trim($this->request->getRequestedPageDirectory(), '/'), 
+                trim($sefFolder, '/')
             ) !== 0
         ) {
             $this->call404();
